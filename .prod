@@ -1,0 +1,3 @@
+APIGW_REST=https://gabhkn3xo9.execute-api.eu-west-1.amazonaws.com/prod
+APIGW_WS=wss://zurb6vmlr8.execute-api.eu-west-1.amazonaws.com/prod
+CLOUDFRONT=d3ff55rid731f7.cloudfront.net

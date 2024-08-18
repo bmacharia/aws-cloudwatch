@@ -1,0 +1,34 @@
+# dependencies
+**/node_modules
+
+# zip
+**/*.zip
+
+# opennext
+.open-next
+
+# misc
+.DS_Store
+
+# local env files
+.env*.local
+
+# next.js
+**/.next
+
+# terraform
+infra/terraform/environments/*/builds
+**/.terraform
+
+# dist files
+**/dist
+**/out
+**/tmp
+**/.env*
+.vscode/settings.json
+
+# allow backend/lambda/canaries/nodejs/node_modules
+!backend/lambda/canaries/nodejs/node_modules/
+
+# ignore specific TF configration files
+**/*.tfvars

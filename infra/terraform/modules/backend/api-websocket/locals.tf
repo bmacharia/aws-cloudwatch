@@ -1,0 +1,4 @@
+locals {
+  root          = "${path.module}/../../../../.."
+}
+
