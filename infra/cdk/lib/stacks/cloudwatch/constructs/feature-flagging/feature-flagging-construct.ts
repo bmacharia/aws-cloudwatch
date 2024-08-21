@@ -63,6 +63,10 @@ export class FeatureFlaggingConstruct extends Construct {
       project: this.evidentlyProject,
       variations: [
         {
+          stringValue: 'none',
+          variationName: 'none',
+        },
+        {
           stringValue: 'low',
           variationName: 'low',
         },
