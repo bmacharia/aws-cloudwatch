@@ -36,7 +36,7 @@ const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPro
   }
 
   logger.info('Request details', { httpMethod, fullName: full_name, path });
-  logger.addPersistentLogAttributes({
+  logger.appendKeys({
     correlationIds: {
       requestId: event.requestContext.requestId,
       httpMethod,
