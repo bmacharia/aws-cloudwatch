@@ -120,5 +120,5 @@ export const lambdaHandler = async (event: Event): Promise<ReturnType> => {
 
 export const handler = middy(lambdaHandler)
   .use(captureLambdaHandler(tracer, { captureResponse: true }))
-  // This adds the Lambda context to the logger and clears all correlation IDs at the end of the request
-  .use(injectLambdaContext(logger, { clearState: true, logEvent: true }));
+  // This adds the Lambda context to the logger
+  .use(injectLambdaContext(logger, { logEvent: true }));

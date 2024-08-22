@@ -216,4 +216,4 @@ const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPro
 export const handler = middy(lambdaHandler)
   .use(captureLambdaHandler(tracer))
   // This adds the Lambda context to the logger and clears all correlation IDs at the end of the request
-  .use(injectLambdaContext(logger, { logEvent: true, clearState: true }));
+  .use(injectLambdaContext(logger, { logEvent: true}));
