@@ -1,0 +1,106 @@
+=== Installing the Necessary Tools
+
+You need to have the following tools installed:
+
+- link:https://github.com/nvm-sh/nvm[NVM]: Node Version Manager is used to easily install and manage multiple versions of Node.js and npm. Alternatively, you can directly install link:https://nodejs.org/[Node.js] and link:https://www.npmjs.com/[npm] if you prefer.
+- link:https://pnpm.io/[pnpm]: A fast, disk space-efficient package manager. It is recommended to use pnpm instead of npm or yarn. This is not strictly necessary though.
+- link:https://aws.amazon.com/cli/[AWS CLI]: The AWS Command Line Interface is used to interact with AWS services from the command line. It's also used by our deployment scripts.
+
+Depending on the track(s) you want to follow, you also need to install the link:https://aws.amazon.com/cdk/[Cloud Development Kit] and/or link:https://www.terraform.io/[Terraform], but more on that in the dedicated chapters.
+
+==== macOS
+
+With macOS, the installation process is quite straightforward:
+
+* Install link:https://brew.sh/[Homebrew] if you don't have it.
+
+[source,sh]
+----
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+----
+
+* Install link:https://formulae.brew.sh/formula/nvm[NVM] via homebrew.
+
+[source,sh]
+----
+brew install nvm
+----
+
+Please make sure that the binary is exported in your shell configuration file (e.g., `~/.bashrc`, `~/.zshrc`, or `~/.profile`). NVM will provide you with the necessary instructions after installation.
+
+* Install Node.js and npm using NVM:
+
+[source,sh]
+----
+nvm install node # "node" is an alias for the latest version
+# you can also install a specific version
+----
+
+* Install pnpm:
+
+[source,sh]
+----
+npm install -g pnpm
+----
+
+* Install AWS CLI:
+
+[source,sh]
+----
+brew install awscli
+----
+
+==== Linux
+
+On Linux, the installation process is similar to macOS:
+
+* Install NVM:
+
+[source,sh]
+----
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+----
+
+As with macOS, please make sure that the binary is exported in your shell configuration file (e.g., `~/.bashrc`, `~/.zshrc`, or `~/.profile`). NVM will provide you with the necessary instructions after installation.
+
+* Install Node.js and npm using NVM:
+
+[source,sh]
+----
+nvm install node # "node" is an alias for the latest version
+# you can also install a specific version
+----
+
+* Install pnpm:
+
+[source,sh]
+----
+npm install -g pnpm
+----
+
+* Install AWS CLI:
+
+[source,sh]
+----
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+----
+
+
+==== Windows
+
+If you're working with Windows, you need to use link:https://learn.microsoft.com/en-gb/windows/wsl/install[WSL] (Windows Subsystem for Linux).
+
+With this, you can run a Linux distribution on your Windows machine, which basically allow you to follow the Linux instructions.
+
+After you've successfully installed WSL, you can enter the Linux shell by running `wsl` in your command prompt.
+
+****
+*Important*: You'll also need to transpile our bash scripts via `dos2unix` or a similar tool, as the line endings are different on Windows. You can install `dos2unix` via `sudo apt install dos2unix` on your WSL.
+Afterwards, you should transpile all files inside the `scripts` directory by running `dos2unix scripts/*`.
+****
+
+=== Next Steps
+
+Once you have all the tools installed, you can proceed to deploy the code from the repository. Follow the instructions either from the link:docs/cdk.adoc[💛 CDK track] or the link:docs/terraform.adoc[💜 Terraform track].
