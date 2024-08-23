@@ -4,7 +4,7 @@
 set -e
 
 SCRIPT_PATH="$(dirname "$(realpath "$0")")"
-ROOT_PATH=${SCRIPT_PATH}/../../
+ROOT_PATH=${SCRIPT_PATH}/../..
 BACKEND_DIR=${ROOT_PATH}/backend
 CHECKSUM_OLD_PATH=${BACKEND_DIR}/tmp/checksum_files_old.txt
 CHECKSUM_NEW_PATH=${BACKEND_DIR}/tmp/checksum_files_new.txt
@@ -39,7 +39,7 @@ pushd $BACKEND_DIR >/dev/null 2>&1
   echo "Transpiling TypeScript files..."
 
   # compiling everything to plain javascript
-  $ROOT_PATH/node_modules/.bin/tsc
+  $BACKEND_DIR/node_modules/.bin/tsc
   
   # create target dist folder
   mkdir -p dist >/dev/null 2>&1
