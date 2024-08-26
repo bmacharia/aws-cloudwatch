@@ -1,0 +1,146 @@
+== Using the Terraform Track
+
+Terraform is a tool for building, changing, and versioning infrastructure safely and efficiently. Terraform can manage existing and popular service providers as well as custom in-house solutions.
+
+It's one of two infrastructure tracks we provide with the CloudWatch book.
+
+=== Installing Terraform
+
+To get started with Terraform, you need to install the binary on your local machine. We recommend to use the `tfenv` tool to manage different versions of Terraform.
+
+==== macOS
+
+With macOS, the installation process is quite straightforward:
+
+* Install link:https://formulae.brew.sh/formula/tfenv[tfen] via Homebrew:
+
+[source,sh]
+----
+brew install tfenv
+----
+
+* If it wasn't done automatically, don't forget to extend your PATH variable to include the `tfenv` binary:
+
+[source,sh]
+----
+# bash
+echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
+# zsh
+echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.zprofile
+----
+
+That's already it.
+As the `infra/terraform` folder contains a `.terraform_version` file, `tfenv` will take care of the correct version for you.
+
+==== Linux
+
+The process on Linux is quite similar to macOS.
+Please use the instructions in the link:https://github.com/tfutils/tfenv[tfenv GitHub repository] to install the tool.
+
+For example:
+
+* via Arch User Repository
+
+[source,sh]
+----
+yay --sync tfenv
+----
+
+* or via the GitHub repository
+
+[source,sh]
+----
+git clone git clone --depth=1 https://github.com/tfutils/tfenv.git ~/.tfenv
+# please export the binary path to your PATH
+# bash
+echo 'export PATH=$PATH:$HOME/.tfenv/bin' >> ~/.bashrc
+# zsh
+echo 'export PATH=$PATH:$HOME/.tfenv/bin' >> ~/.zshrc
+----
+
+==== Windows
+
+On Windows with WSL, you can follow the Linux instructions.
+You only need another export command for your PATH:
+
+[source,sh]
+----
+echo 'export PATH=$PATH:$HOME/.tfenv/bin' >> ~/.bashrc
+----
+
+
+=== Applying our Infrastructure
+
+We've bundled everything into a single deploy script to make it easier for you to get started.
+
+But let's have a look at the folder structure first:
+
+[source,plaintext]
+----
+root/
+├── backend/
+│   └── lambda/
+├── infra/
+│   └── terraform/
+├── scripts/
+│   ├── backend/
+│   │   ├── install.sh
+│   │   └── transpile.sh
+│   ├── frontend/
+│   │   └── build-deploy.sh
+│   ├── apply-terraform.sh
+│   └── destroy-terraform.sh
+----
+
+What is what?
+
+* `backend/lambda/` - contains our Lambda functions
+* `infra/terraform/` - contains our Terraform configuration
+* `scripts/backend/` - contains the scripts to install and transpile the Lambda functions
+* `scripts/frontend/` - contains the script to build and deploy the frontend (exported as static HTML, so it's only uploaded to the S3 bucket)
+* `scripts/apply-terraform.sh` - the script to apply the Terraform configuration
+* `scripts/destroy-terraform.sh` - the script to destroy the Terraform configuration
+
+So this means, to apply the infrastructure you only need to run the following command:
+
+[source,sh]
+----
+./scripts/apply-terraform.sh
+----
+
+On the first run, you'll be prompted if the AWS account you're currently logged into is correct.
+If not, you can abort the process and switch to the correct account.
+
+Let's have a look at the script's output on the first run:
+
+[source,text]
+----
+$ ./scripts/apply-terraform.sh
+
+No environment specified, defaulting to 'dev'.
+Generated project suffix: 609ftfma
+variables.tfvars file created with project suffix.
+Use AWS account id 590183990318? (y/n): y
+AWS account id added to variables.tfvars.
+Enter Discord Webhook URL for alerting (leave empty to skip):
+Discord Webhook URL skipped. Please remove the line from variables.tfvars if needed later
+S3 bucket cw-ho-tf-state-609ftfma created successfully.
+backend.tfvars file created with bucket name.
+DynamoDB lock table already exists.
+Enter email addresses for alerting (comma separated - leave empty to skip):
+Email addresses for alerting not provided.
+Installing dependencies and transpiling the backend...
+Applying Terraform configuration for dev environment...
+----
+
+The script will create two files for you:
+
+* `backend.tfvars` - contains the bucket name for the Terraform state, e.g. `bucket = "cw-ho-tf-state-609ftfma"`
+* `variables.tfvars` - contains the project suffix and the AWS account ID, e.g. `project_suffix = "609ftfma"` and `aws_account_id = "590183990318"` and the discord webhook URL / alerting emails if provided
+
+It will also create...
+
+* the S3 bucket for the Terraform state
+* the DynamoDB lock table for the Terraform state
+
+Afterward, Terraform will already be executed! 🎉

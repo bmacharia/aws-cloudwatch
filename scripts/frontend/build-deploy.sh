@@ -25,7 +25,7 @@ fi
 ENV_FILE="$ROOT_PATH/.env.$ENVIRONMENT"
 
 # Get logged-in AWS Account ID via STS
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --region us-east-1)
 
 # check if our environment file is there
 if [ ! -f $ENV_FILE ] && [ "$IAC_PROVIDER" = "tf" ]; then
@@ -38,11 +38,11 @@ if [ "$IAC_PROVIDER" = "cdk" ]; then
   echo "Fetching CloudFormation outputs for CDK deployment..."
 
   # Fetch CloudFormation outputs
-  APIGW_WS=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-ApiStack --query "Stacks[0].Outputs[?ExportName=='wss-api-url'].OutputValue" --output text)
-  APIGW_REST=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-ApiStack --query "Stacks[0].Outputs[?ExportName=='rest-api-url'].OutputValue" --output text)
-  RUM_GUEST_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-MonitoringStack --query "Stacks[0].Outputs[?ExportName=='rum-guest-role'].OutputValue" --output text)
-  RUM_IDENTITY_POOL_ID=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-MonitoringStack --query "Stacks[0].Outputs[?ExportName=='rum-identity-pool-id'].OutputValue" --output text)
-  RUM_APP_MONITOR_ID=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-MonitoringStack --query "Stacks[0].Outputs[?ExportName=='rum-app-monitor-id'].OutputValue" --output text)
+  APIGW_WS=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-ApiStack --query "Stacks[0].Outputs[?ExportName=='wss-api-url'].OutputValue" --output text --region us-east-1)
+  APIGW_REST=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-ApiStack --query "Stacks[0].Outputs[?ExportName=='rest-api-url'].OutputValue" --output text --region us-east-1)
+  RUM_GUEST_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-MonitoringStack --query "Stacks[0].Outputs[?ExportName=='rum-guest-role'].OutputValue" --output text --region us-east-1)
+  RUM_IDENTITY_POOL_ID=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-MonitoringStack --query "Stacks[0].Outputs[?ExportName=='rum-identity-pool-id'].OutputValue" --output text --region us-east-1)
+  RUM_APP_MONITOR_ID=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-MonitoringStack --query "Stacks[0].Outputs[?ExportName=='rum-app-monitor-id'].OutputValue" --output text --region us-east-1)
 
   # print both variables
   echo "NEXT_PUBLIC_APIGW_WS: $APIGW_WS"
@@ -119,12 +119,12 @@ env $(cat $ENV_FILE | xargs) pnpm run build
 popd >/dev/null
 
 if [ "$IAC_PROVIDER" = "cdk" ]; then
-  BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-FrontendHostingStack --query "Stacks[0].Outputs[?ExportName=='frontend-bucket-name'].OutputValue" --output text)
+  BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name $ENVIRONMENT-FrontendHostingStack --query "Stacks[0].Outputs[?ExportName=='frontend-bucket-name'].OutputValue" --output text --region us-east-1)
   echo "Bucket Name: $BUCKET_NAME"
 fi
 
 if [ "$IAC_PROVIDER" = "tf" ]; then
-  BUCKET_NAME=$(aws s3api list-buckets --query "Buckets[?starts_with(Name, 'cw-ho-$IAC_PROVIDER-$ENVIRONMENT-frontend')].Name" --output text)
+  BUCKET_NAME=$(aws s3api list-buckets --query "Buckets[?starts_with(Name, 'cw-ho-$IAC_PROVIDER-$ENVIRONMENT-frontend')].Name" --output text --region us-east-1)
 fi
 
 if [ -z "$BUCKET_NAME" ]; then
@@ -133,21 +133,21 @@ if [ -z "$BUCKET_NAME" ]; then
 fi
 
 # Deploy next app via S3 Sync
-aws s3 sync $ROOT_PATH/frontend/out s3://$BUCKET_NAME --delete
+aws s3 sync $ROOT_PATH/frontend/out s3://$BUCKET_NAME --delete --region us-east-1
 
 # Get CloudFront distribution ID
 CLOUDFRONT_DISTRIBUTION_ID=$(aws cloudfront list-distributions \
   --query 'DistributionList.Items[].{ID:Id,DomainName:DomainName,Origin:Origins.Items[0].DomainName}' \
-  --output text | grep $BUCKET_NAME | cut -f2)
+  --output text --region us-east-1 | grep $BUCKET_NAME | cut -f2)
 
 CLOUDFRONT_URL=$(aws cloudfront list-distributions \
   --query 'DistributionList.Items[].{ID:Id,DomainName:DomainName,Origin:Origins.Items[0].DomainName}' \
-  --output text | grep $BUCKET_NAME | cut -f1)
+  --output text --region us-east-1 | grep $BUCKET_NAME | cut -f1)
 
 # Invalidate CloudFront cache
 aws cloudfront create-invalidation \
   --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
-  --paths "/*" >/dev/null
+  --paths "/*" --region us-east-1 >/dev/null
 
 # Print Distribution URL
 echo "Distribution URL: $CLOUDFRONT_URL"

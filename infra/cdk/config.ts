@@ -1,4 +1,6 @@
 import { Environment } from 'aws-cdk-lib';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 
 type EnvName = 'dev' | 'prod';
 type Arn = `arn:aws:${string}:${string}:${number}:${string}`;
@@ -25,10 +27,26 @@ export interface AppEnvironmentConfig {
   };
 }
 
+const envFilePath = resolve(__dirname, 'variables.env');
+const envFileContent = readFileSync(envFilePath, 'utf-8');
+const envVariables = envFileContent.split('\n').reduce((acc, line) => {
+  const [key, value] = line.split('=');
+  if (key && value) {
+    acc[key.trim()] = value.trim();
+  }
+  return acc;
+}, {} as Record<string, string>);
+
+const accountId = envVariables['aws_account_id'];
+
+if (!accountId) {
+  throw new Error('aws_account_id is not defined in the environment variables');
+}
+
 export const devEnvironment: AppEnvironmentConfig = {
   name: 'dev',
   env: {
-    account: '637423567513',
+    account: accountId,
     region: 'us-east-1',
   },
   discordWebhooks: {

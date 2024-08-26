@@ -1,13 +1,9 @@
 import { AppEnvironmentConfig } from '@/config';
-import { CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
+import { CfnOutput, Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import * as aws_cloudfront from 'aws-cdk-lib/aws-cloudfront';
-import { LambdaEdgeEventType } from 'aws-cdk-lib/aws-cloudfront';
-import * as aws_origins from 'aws-cdk-lib/aws-cloudfront-origins';
-import * as aws_lambda from 'aws-cdk-lib/aws-lambda';
 import * as aws_s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
-import * as path from 'path';
-import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 
 interface FrontendHostingStackProps extends Omit<StackProps, 'env'>, AppEnvironmentConfig {
   restApiUrl: string;
@@ -20,12 +16,6 @@ export class FrontendHostingStack extends Stack {
   constructor(scope: Construct, id: string, props: FrontendHostingStackProps) {
     super(scope, id, props);
 
-    const lambdaAtEdge = new aws_cloudfront.experimental.EdgeFunction(this, 'LambdaAtEdge', {
-      code: aws_lambda.Code.fromAsset(path.join(__dirname, '../../../../../backend/lambda/nextRouting/')),
-      handler: 'index.handler',
-      runtime: aws_lambda.Runtime.NODEJS_20_X,
-    });
-
     const cfnToS3 = new CloudFrontToS3(this, 'SpaHosting', {
       insertHttpSecurityHeaders: false,
       bucketProps: {
@@ -34,12 +24,28 @@ export class FrontendHostingStack extends Stack {
       },
       cloudFrontDistributionProps: {
         defaultBehavior: {
-          edgeLambdas: [
-            {
-              eventType: LambdaEdgeEventType.ORIGIN_REQUEST,
-              functionVersion: lambdaAtEdge.currentVersion,
-            },
-          ],
+          allowedMethods: aws_cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+          cachedMethods: aws_cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+          viewerProtocolPolicy: aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: aws_cloudfront.CachePolicy.CACHING_OPTIMIZED,
+          responseHeadersPolicy: aws_cloudfront.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
+        },
+        errorResponses: [
+          {
+            httpStatus: 403,
+            responseHttpStatus: 200,
+            responsePagePath: '/index.html',
+            ttl: Duration.seconds(0),
+          },
+        ],
+        defaultRootObject: 'index.html',
+        httpVersion: aws_cloudfront.HttpVersion.HTTP2,
+        viewerCertificate: {
+          aliases: [],
+          props: {
+            cloudFrontDefaultCertificate: true,
+            minimumProtocolVersion: 'TLSv1',
+          },
         },
       },
     });
