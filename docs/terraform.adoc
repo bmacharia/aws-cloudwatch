@@ -12,7 +12,7 @@ To get started with Terraform, you need to install the binary on your local mach
 
 With macOS, the installation process is quite straightforward:
 
-* Install link:https://formulae.brew.sh/formula/tfenv[tfen] via Homebrew:
+* Install link:https://formulae.brew.sh/formula/tfenv[tfenv] via Homebrew:
 
 [source,sh]
 ----
