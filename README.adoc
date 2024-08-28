@@ -19,7 +19,7 @@ If you want to have a deeper look into the steps, please read the following docu
 * link:docs/tooling.adoc[⚒️ Installing All the Necessary Tools]:
  Learn how to install the necessary tools that we use.
 
-* link:docs/deploying.adoc[💛 Setting Up CDK]:
+* link:docs/cdk.adoc[💛 Setting Up CDK]:
  Learn how to deploy the infrastructure with the CDK track.
 
 * link:docs/terraform.adoc[💜 Setting Up Terraform]:
