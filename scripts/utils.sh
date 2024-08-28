@@ -97,8 +97,8 @@ check_preconditions() {
             if command -v git &>/dev/null; then
                 print_success "Installing tfenv..."
                 git clone https://github.com/tfutils/tfenv.git ~/.tfenv
-                echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bashrc
-                source ~/.bashrc
+                echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
+                source ~/.bash_profile
             else
                 print_error "git is not installed."
                 exit 1
