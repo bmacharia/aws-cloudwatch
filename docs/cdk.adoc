@@ -1,0 +1,76 @@
+== Using the CDK Track 💛
+
+AWS Cloud Development Kit (CDK) is a framework for defining cloud infrastructure in code and provisioning it through AWS CloudFormation. CDK allows you to use familiar programming languages to define your cloud resources.
+
+It's *one of the two* infrastructure tracks we provide with the CloudWatch book.
+
+If you're looking for Terraform, please refer to the link:terraform.adoc[💜 Terraform Track].
+
+=== Installing CDK
+
+To get started with CDK, you need to install the AWS CDK Toolkit (cdk command-line tool) on your local machine.
+
+==== macOS and Linux
+
+With macOS and Linux, the installation process is quite straightforward:
+
+* Install the AWS CDK Toolkit via npm:
+
+[source,sh]
+----
+npm install -g aws-cdk
+----
+
+* Verify the installation:
+
+[source,sh]
+----
+cdk --version
+----
+
+==== Windows
+
+On Windows, you can follow the same instructions as on Linux. Ensure you have Node.js and npm installed and you're using link:https://learn.microsoft.com/en-gb/windows/wsl/install[WSL] (Windows Subsystem for Linux).
+
+=== Applying our Infrastructure
+
+We've bundled everything into a single deploy script to make it easier for you to get started.
+
+But let's have a look at the folder structure first:
+
+[source,plaintext]
+----
+root/
+├── backend/
+│   └── lambda/
+├── infra/
+│   └── cdk/
+├── scripts/
+│   ├── frontend/
+│   │   └── build-deploy.sh
+│   ├── cdk
+│   │   └── deploy.sh
+│   │   └── destroy.sh
+----
+
+What is what?
+
+* `backend/lambda/` - contains our Lambda functions
+* `infra/cdk/` - contains our CDK configuration
+* `scripts/frontend/` - contains the script to build and deploy the frontend (exported as static HTML, so it's only uploaded to the S3 bucket)
+* `scripts/cdk/deploy.sh` - the script to deploy the CDK stack
+* `scripts/cdk/destroy.sh` - the script to destroy the CDK stack
+
+So this means, to apply the infrastructure you only need to run the following command:
+
+[source,sh]
+----
+./scripts/deploy-cdk.sh
+----
+
+On the first run, you'll be prompted if the AWS account you're currently logged into is correct.
+If not, you can abort the process and switch to the correct account.
+
+The script will create a `variables.env` file for you which will contain the AWS account ID.
+
+Afterward, CDK will already be executed! 🎉
