@@ -27,7 +27,7 @@ if [ ! -f "$VARIABLES_FILE" ] || ! grep -q 'aws_account_id' "$VARIABLES_FILE" >/
     read -p "Use AWS account id $aws_account_id? (y/n): " use_aws_account_id
     if [[ "$use_aws_account_id" == "y" ]]; then
         echo "aws_account_id = $aws_account_id" >>"$VARIABLES_FILE"
-        print_success "AWS account id added to variables.tfvars."
+        print_success "AWS account id added to variables.env."
     else
         print_error "Please log into the correct AWS account and retry this."
         exit 1
