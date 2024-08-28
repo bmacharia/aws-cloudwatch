@@ -1,4 +1,4 @@
-=== Installing the Necessary Tools
+== Installing the Necessary Tools
 
 You need to have the following tools installed:
 
@@ -8,7 +8,7 @@ You need to have the following tools installed:
 
 Depending on the track(s) you want to follow, you also need to install the link:https://aws.amazon.com/cdk/[Cloud Development Kit] and/or link:https://www.terraform.io/[Terraform], but more on that in the dedicated chapters.
 
-==== macOS
+=== macOS
 
 With macOS, the installation process is quite straightforward:
 
@@ -50,7 +50,7 @@ npm install -g pnpm
 brew install awscli
 ----
 
-==== Linux
+=== Linux
 
 On Linux, the installation process is similar to macOS:
 
@@ -88,7 +88,7 @@ sudo ./aws/install
 ----
 
 
-==== Windows
+=== Windows
 
 If you're working with Windows, you need to use link:https://learn.microsoft.com/en-gb/windows/wsl/install[WSL] (Windows Subsystem for Linux).
 
@@ -103,4 +103,4 @@ Afterwards, you should transpile all files inside the `scripts` directory by run
 
 === Next Steps
 
-Once you have all the tools installed, you can proceed to deploy the code from the repository. Follow the instructions either from the link:docs/cdk.adoc[💛 CDK track] or the link:docs/terraform.adoc[💜 Terraform track].
+Once you have all the tools installed, you can proceed to deploy the code from the repository. Follow the instructions either from the link:../docs/cdk.adoc[💛 CDK track] or the link:../docs/terraform.adoc[💜 Terraform track].
