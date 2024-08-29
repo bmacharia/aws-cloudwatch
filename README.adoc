@@ -5,7 +5,6 @@ We're excited to have you on board.
 
 This guide will help you set up the necessary tools to deploy the code from the repository included in the CloudWatch Book into your own AWS account.
 
-[title="The Github Repository Tracker", reftext={chapter}.{counter:figure}]
 image::docs/images/architecture.png[width=600, align="center"]
 
 We'll provide instructions for macOS, Linux, and Windows. If you're using a different operating system, you can follow the instructions for Linux, as they are the most similar to other Unix-based systems.
@@ -13,6 +12,10 @@ We'll provide instructions for macOS, Linux, and Windows. If you're using a diff
 === Further Reading
 
 **TL;DR**: use `./scripts/deploy.sh [cdk|tf]` to automatically set up everything (this will also install necessary tools) and deploy the infrastructure and frontend application. 🤖
+
+We've also recorded a video for you to follow along:
+
+image::docs/images/hands-on.gif[width=600, align="center", link="https://share.descript.com/view/NL9QZ4FOnkx"]
 
 If you want to have a deeper look into the steps, please read the following documents:
 
