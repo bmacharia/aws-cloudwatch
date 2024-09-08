@@ -47,13 +47,14 @@ resource "aws_synthetics_canary" "canary" {
 # Grouping our canaries so they don't mix if we have different environments
 # on the same AWS account
 resource "aws_synthetics_group" "main" {
-  name     = "${var.global_prefix}-${var.environment}"
+  name = "${var.global_prefix}-${var.environment}"
 }
 
 resource "aws_synthetics_group_association" "main" {
   for_each   = { for idx, val in local.canaries : idx => val }
   group_name = aws_synthetics_group.main.name
   canary_arn = aws_synthetics_canary.canary[each.key].arn
+  depends_on = [aws_synthetics_canary.canary]
 }
 
 
