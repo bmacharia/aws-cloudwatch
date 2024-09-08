@@ -90,6 +90,14 @@ check_preconditions() {
     if command -v tfenv &>/dev/null; then
         print_success "tfenv is already installed."
     else
+        if command -v terraform &>/dev/null; then
+            print_error "Terraform is installed but tfenv is not."
+            print_error "Please remove Terraform and run the script again."
+            print_error "We'll manage Terraform via tfenv (https://github.com/tfutils/tfenv)."
+            print_error "This allows us to have multiple versions in parallel :)"
+            exit 1
+        fi
+
         print_error "tfenv is not installed."
         if [[ "$OSTYPE" == "darwin"* ]]; then
             print_success "Installing tfenv..."
