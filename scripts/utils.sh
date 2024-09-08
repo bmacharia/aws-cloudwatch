@@ -14,13 +14,14 @@ print_error() {
     echo "$(tput setaf 1)$1$(tput sgr0)" >&2
 }
 
-# check if th necessary tools are installed.
+# check if the necessary tools are installed.
 # If they are missing, install them (for macOS or Linux)
 #
 # • npm/node
 # • pnpm
 # • aws-cli
 # • tfenv / terraform
+# • md5sum
 check_preconditions() {
     if command -v npm &>/dev/null; then
         print_success "npm is already installed."
@@ -110,6 +111,30 @@ check_preconditions() {
         pushd $ROOT_PATH/infra/terraform >/dev/null
             tfenv install
         popd >/dev/null
+    fi
+
+    if command -v md5sum &>/dev/null; then
+        print_success "md5sum is already installed."
+    else
+        print_error "md5sum is not installed."
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            print_success "Installing md5sum..."
+            brew install md5sha1sum
+        elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            if command -v apt-get &>/dev/null; then
+                print_success "Installing md5sum..."
+                sudo apt-get install -y coreutils
+            elif command -v yum &>/dev/null; then
+                print_success "Installing md5sum..."
+                sudo yum install -y coreutils
+            else
+                print_error "Unsupported package manager."
+                exit 1
+            fi
+        else
+            print_error "Unsupported OS."
+            exit 1
+        fi
     fi
 }
 
