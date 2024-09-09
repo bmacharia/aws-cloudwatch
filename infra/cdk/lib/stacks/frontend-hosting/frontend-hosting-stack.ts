@@ -7,6 +7,10 @@ import { Construct } from 'constructs';
 
 interface FrontendHostingStackProps extends Omit<StackProps, 'env'>, AppEnvironmentConfig {
   restApiUrl: string;
+  basicAuth?: {
+    username: string;
+    password: string;
+  };
 }
 
 export class FrontendHostingStack extends Stack {
@@ -15,6 +19,31 @@ export class FrontendHostingStack extends Stack {
 
   constructor(scope: Construct, id: string, props: FrontendHostingStackProps) {
     super(scope, id, props);
+
+    let cloudFrontFunction: aws_cloudfront.Function | undefined;
+
+    if (props.basicAuth) {
+      const authString = Buffer.from(`${props.basicAuth.username}:${props.basicAuth.password}`).toString('base64');
+      cloudFrontFunction = new aws_cloudfront.Function(this, 'BasicAuthFunction', {
+        code: aws_cloudfront.FunctionCode.fromInline(`
+          function handler(event) {
+            var request = event.request;
+            var headers = request.headers;
+            var authString = "Basic ${authString}";
+            
+            if (typeof headers.authorization === "undefined" || headers.authorization.value !== authString) {
+              return {
+                statusCode: 401,
+                statusDescription: "Unauthorized",
+                headers: { "www-authenticate": { value: "Basic" } }
+              };
+            }
+            
+            return request;
+          }
+        `),
+      });
+    }
 
     const cfnToS3 = new CloudFrontToS3(this, 'SpaHosting', {
       insertHttpSecurityHeaders: false,
@@ -29,6 +58,14 @@ export class FrontendHostingStack extends Stack {
           viewerProtocolPolicy: aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           cachePolicy: aws_cloudfront.CachePolicy.CACHING_OPTIMIZED,
           responseHeadersPolicy: aws_cloudfront.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
+          functionAssociations: cloudFrontFunction
+            ? [
+                {
+                  function: cloudFrontFunction,
+                  eventType: aws_cloudfront.FunctionEventType.VIEWER_REQUEST,
+                },
+              ]
+            : undefined,
         },
         errorResponses: [
           {

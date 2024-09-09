@@ -20,6 +20,10 @@ export interface AppEnvironmentConfig {
   layers: {
     insights: Arn;
   };
+  basicAuth?: {
+    username: string;
+    password: string;
+  };
   defaultTags: {
     Environment: 'dev' | 'prod';
     App: 'cw-ho-tf';
@@ -29,15 +33,28 @@ export interface AppEnvironmentConfig {
 
 const envFilePath = resolve(__dirname, 'variables.env');
 const envFileContent = readFileSync(envFilePath, 'utf-8');
-const envVariables = envFileContent.split('\n').reduce((acc, line) => {
-  const [key, value] = line.split('=');
-  if (key && value) {
-    acc[key.trim()] = value.trim();
-  }
-  return acc;
-}, {} as Record<string, string>);
+const envVariables = envFileContent.split('\n').reduce(
+  (acc, line) => {
+    const [key, value] = line.split('=');
+    if (key && value) {
+      acc[key.trim()] = value.trim().replace(/^"(.*)"$/, '$1');
+    }
+    return acc;
+  },
+  {} as Record<string, string>
+);
 
 const accountId = envVariables['aws_account_id'];
+const basicAuthEnabled = envVariables['basic_auth_enabled'] === 'true';
+const basicAuthUsername = envVariables['basic_auth_username'] ?? 'cw-pro';
+const basicAuthPassword = envVariables['basic_auth_password'] ?? 'Password1!';
+
+const basicAuth = basicAuthEnabled
+  ? {
+      username: basicAuthUsername,
+      password: basicAuthPassword,
+    }
+  : undefined;
 
 if (!accountId) {
   throw new Error('aws_account_id is not defined in the environment variables');
@@ -58,6 +75,7 @@ export const devEnvironment: AppEnvironmentConfig = {
   layers: {
     insights: 'arn:aws:lambda:us-east-1:580247275435:layer:LambdaInsightsExtension-Arm64:11',
   },
+  basicAuth,
   defaultTags: {
     Environment: 'dev',
     App: 'cw-ho-tf',
