@@ -49,6 +49,14 @@ resource "aws_cloudfront_distribution" "main" {
 
     viewer_protocol_policy = "redirect-to-https"
     compress               = true
+
+    dynamic "function_association" {
+      for_each = var.basic_auth_enabled ? [1] : []
+      content {
+        event_type   = "viewer-request"
+        function_arn = aws_cloudfront_function.basic_auth.arn
+      }
+    }
   }
 
   restrictions {
@@ -64,4 +72,3 @@ resource "aws_cloudfront_distribution" "main" {
 
   aliases = []
 }
-

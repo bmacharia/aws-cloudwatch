@@ -31,10 +31,14 @@ provider "aws" {
 }
 
 module "frontend" {
-  source        = "../../modules/frontend"
-  global_prefix = local.global_prefix
-  environment   = local.environment
-  global_suffix = var.project_suffix
+  source              = "../../modules/frontend"
+  global_prefix       = local.global_prefix
+  environment         = local.environment
+  global_suffix       = var.project_suffix
+  nodejs_runtime      = local.nodejs_runtime
+  basic_auth_enabled  = var.basic_auth_enabled
+  basic_auth_username = var.basic_auth_username
+  basic_auth_password = var.basic_auth_password
   providers = {
     aws.us-east-1 = aws.us-east-1
   }
@@ -96,8 +100,8 @@ module "alarms" {
   lambda_insights_layer_arn = local.lambda_insights_layer_arn
   email_addresses           = var.alerting_emails
   evidently_project_arn     = module.evidently.evidently_project_arn
-  rest_api_name = module.api_rest.rest_api_name
-  table_name_repositories = module.database.table_name_repositories
+  rest_api_name             = module.api_rest.rest_api_name
+  table_name_repositories   = module.database.table_name_repositories
 }
 
 module "synthetics" {

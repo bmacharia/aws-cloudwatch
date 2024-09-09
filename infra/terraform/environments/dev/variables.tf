@@ -17,3 +17,20 @@ variable "aws_account_id" {
   description = "AWS Account ID"
   type        = string
 }
+
+variable "basic_auth_enabled" {
+  description = "Should the frontend by protected via Basic Auth?"
+  type        = bool
+}
+
+variable "basic_auth_username" {
+  description = "Username for basic authentication (if enabled)"
+  type        = string
+  default     = "cw-pro"
+}
+
+variable "basic_auth_password" {
+  description = "Password for basic authentication (if enabled)"
+  type        = string
+  default     = "Password1!"
+}
