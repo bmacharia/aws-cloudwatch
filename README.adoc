@@ -5,7 +5,7 @@ We're excited to have you on board.
 
 This guide will help you set up the necessary tools to deploy the code from the repository included in the CloudWatch Book into your own AWS account.
 
-image::docs/images/architecture.png[width=600, align="center"]
+image::docs/images/architecture.gif[width=600, align="center"]
 
 We'll provide instructions for macOS, Linux, and Windows. If you're using a different operating system, you can follow the instructions for Linux, as they are the most similar to other Unix-based systems.
 
